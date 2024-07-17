@@ -1,6 +1,5 @@
-import functools
 import itertools
-import sys
+import functools
 
 B64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
@@ -52,7 +51,7 @@ def b64decode(input) -> bytes:
     if len(bin_str) % 8 != 0:
         bin_str = bin_str[:-(len(bin_str) % 8)] # drop useless bits
     return bytes(int(bin_str[i:i+8], 2) for i in range(0, len(bin_str), 8))
-
+    
 def xor(secret, input) -> bytes:
     if isinstance(secret, str):
         secret = utf8_to_bytes(secret)
@@ -78,32 +77,3 @@ def hashfn(input) -> str:
     for b in input:
         hash = T[hash ^ b]
     return md5ify(hash)
-
-def encrypt(secret, input) -> str:
-    return hashfn(input) + b64encode(xor(secret, input))
-
-def decrypt(secret, input_str) -> bytes:
-    if isinstance(input_str, bytes):
-        input_str = bytes_to_utf8(input_str)
-    if len(input_str) < 4:
-        raise Exception("invalid input")       
-    hash = input_str[0:4]
-    decoded_payload = b64decode(input_str[4:])
-    decrypted = xor(secret, decoded_payload)
-    if hashfn(decrypted) != hash:
-        raise Exception("invalid input")
-    return decrypted
-
-if __name__ == "__main__":
-    secret = slurp_as_bytes(__file__)
-
-    input = sys.stdin.read()
-    print(input)
-
-    encrypted = encrypt(secret, input)
-    # encrypted = "d2a8EwkDZQ" # will not work => invalid input
-    # encrypted = "fdsfds" # will not work either
-    print(encrypted)
-
-    decrypted = decrypt(secret, encrypted)
-    print(bytes_to_utf8(decrypted))
