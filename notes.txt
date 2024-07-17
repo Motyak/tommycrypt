@@ -1,0 +1,7 @@
+- standalone script that uses its own source as key for xor (basic xor cipher)
+
+---
+
+- base64 encoding of the payload
+  -> use custom alphabet order for base64
+- add SPICE everywhere (where spice is the length of the ciphered payload)
