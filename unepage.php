@@ -1,10 +1,12 @@
 <?php
     function encrypt($msg) {
-        return `/bin/bash -c 'python3 encrypt.py <<< "{$msg}"'`;
+        $res = `/bin/bash -c 'python3 encrypt.py <<< "{$msg}"'` or die("rip");
+        return $res;
     }
 
     function decrypt($cipher) {
-        return `/bin/bash -c 'python3 decrypt.py <<< "{$cipher}"'`;
+        $res = `/bin/bash -c 'python3 decrypt.py <<< "{$cipher}"'` or die("rip");
+        return $res;
     }
 
     /* handle POST */
