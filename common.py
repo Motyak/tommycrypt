@@ -9,6 +9,8 @@ def slurp_as_bytes(file):
     with open(file, encoding="utf-8") as f:
         return f.read()
 
+SECRET = slurp_as_bytes(__file__)
+
 def bytes_to_utf8(input):
     assert isinstance(input, bytes)
     return input.decode("utf-8")

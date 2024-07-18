@@ -1,4 +1,4 @@
-from common import slurp_as_bytes, b32decode, b64decode, xor, hashfn, bytes_to_utf8
+from common import SECRET, b32decode, b64decode, xor, hashfn, bytes_to_utf8
 import sys
 
 def decrypt(secret, input_str) -> bytes:
@@ -16,9 +16,8 @@ def decrypt(secret, input_str) -> bytes:
     return decrypted
 
 if __name__ == "__main__":
-    secret = slurp_as_bytes(__file__)
     input = sys.stdin.read()
     if len(input) > 0 and input[-1] == "\n":
         input = input[:-1] # remove trailing newline
-    decrypted = decrypt(secret, input)
+    decrypted = decrypt(SECRET, input)
     print(bytes_to_utf8(decrypted))
