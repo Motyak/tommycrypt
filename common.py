@@ -1,6 +1,8 @@
 import itertools
 import functools
+import sys #debug
 
+B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
 B64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 def slurp_as_bytes(file):
@@ -18,11 +20,44 @@ def utf8_to_bytes(input):
 def byte_to_bin_str(byte):
     return bin(byte)[2:].rjust(8, "0")
 
+def quintet_to_bin_str(quintet):
+    return bin(quintet)[2:].rjust(5, "0")
+
 def sextet_to_bin_str(sextet):
     return bin(sextet)[2:].rjust(6, "0")
 
 def bin_str_to_int(bin_str):
     return int(bin_str, 2)
+
+def b32encode(input) -> str:
+    global B32_ALPHABET
+    assert isinstance(B32_ALPHABET, str)
+    assert len(B32_ALPHABET) == 32
+    if len(input) == 0:
+        return ""
+    if isinstance(input, str):
+        input = utf8_to_bytes(input)
+
+    reducer = lambda acc, c: acc + byte_to_bin_str(c)
+    bin_str = functools.reduce(reducer, input, "")
+    quintets = [bin_str[i:i+5] for i in range(0, len(bin_str), 5)]
+    quintets[-1] = quintets[-1].ljust(5, "0") # potential padding
+    indices = [*map(bin_str_to_int, quintets)]
+    base32 = "".join([*map(lambda i: B32_ALPHABET[i], indices)])
+    return base32
+
+
+def b32decode(input) -> bytes:
+    global B32_ALPHABET
+    assert isinstance(B32_ALPHABET, str)
+    assert len(B32_ALPHABET) == 32
+
+    indices = [*map(lambda c: B32_ALPHABET.index(c), input)]
+    quintets = [*map(lambda i: quintet_to_bin_str(i), indices)]
+    bin_str = "".join(quintets)
+    if len(bin_str) % 8 != 0:
+        bin_str = bin_str[:-(len(bin_str) % 8)] # drop useless bits
+    return bytes(int(bin_str[i:i+8], 2) for i in range(0, len(bin_str), 8))
 
 def b64encode(input) -> str:
     global B64_ALPHABET
@@ -45,6 +80,7 @@ def b64decode(input) -> bytes:
     global B64_ALPHABET
     assert isinstance(B64_ALPHABET, str)
     assert len(B64_ALPHABET) == 64
+
     indices = [*map(lambda c: B64_ALPHABET.index(c), input)]
     sextets = [*map(lambda i: sextet_to_bin_str(i), indices)]
     bin_str = "".join(sextets)
