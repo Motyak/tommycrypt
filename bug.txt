@@ -1,0 +1,1 @@
+python3 encrypt.py <<< "b8720w8nrq0g3dd5t7twbs3gg3i604046n0bbx6h6h9f215g" | python3 decrypt.py
