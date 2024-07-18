@@ -1,7 +1,9 @@
-from common import slurp_as_bytes, b32decode, xor, hashfn, bytes_to_utf8
+from common import slurp_as_bytes, b32decode, b64decode, xor, hashfn, bytes_to_utf8
 import sys
 
 def decrypt(secret, input_str) -> bytes:
+    if len(input_str) == 0:
+        return bytes()
     if isinstance(input_str, bytes):
         input_str = bytes_to_utf8(input_str)
     if len(input_str) < 4:

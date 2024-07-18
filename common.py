@@ -51,6 +51,9 @@ def b32decode(input) -> bytes:
     global B32_ALPHABET
     assert isinstance(B32_ALPHABET, str)
     assert len(B32_ALPHABET) == 32
+    for c in input:
+        if c not in B32_ALPHABET:
+            raise Exception(f"character `{c}` is not in base32 alphabet ({B32_ALPHABET})")
 
     indices = [*map(lambda c: B32_ALPHABET.index(c), input)]
     quintets = [*map(lambda i: quintet_to_bin_str(i), indices)]
@@ -80,6 +83,9 @@ def b64decode(input) -> bytes:
     global B64_ALPHABET
     assert isinstance(B64_ALPHABET, str)
     assert len(B64_ALPHABET) == 64
+    for c in input:
+        if c not in B64_ALPHABET:
+            raise Exception(f"character `{c}` is not in base32 alphabet ({B64_ALPHABET})")
 
     indices = [*map(lambda c: B64_ALPHABET.index(c), input)]
     sextets = [*map(lambda i: sextet_to_bin_str(i), indices)]

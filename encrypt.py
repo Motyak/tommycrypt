@@ -1,7 +1,9 @@
-from common import slurp_as_bytes, hashfn, b32encode, xor
+from common import slurp_as_bytes, hashfn, b32encode, b64encode, xor
 import sys
 
 def encrypt(secret, input) -> str:
+    if len(input) == 0:
+        return ""
     return hashfn(input) + b32encode(xor(secret, input))
 
 if __name__ == "__main__":
