@@ -3,7 +3,7 @@
 function multi_encrypt {
     local nb_of_parts="$1"
 
-    mkdir "tmp$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 8)"
+    mkdir "tmp$(shuf -i 1-999999999 -n 1)"
     tmpdir="$_"
     cd "$tmpdir"
     split -n "$nb_of_parts" - # takes STDIN here
