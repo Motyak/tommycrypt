@@ -2,7 +2,7 @@ works with both utf-8 text and raw binary
 
 ## simple examples ##
 python3 encrypt.py <<< "my message"
-python3 decrypt.py <<< "_c9200ga500gq0x9gg4r0"
+python3 decrypt.py <<< "_c5b90ga500gq0x9gg4r0f0"
 echo "my message" | python3 encrypt.py | python3 decrypt.py
 
 ## multi-process (16 here) with binary file ##
@@ -19,6 +19,6 @@ php -S localhost:0 unepage.php # another possibility
 
 ## web server outsourcing using CLI ##
 curl -X POST http://127.0.0.1:55555 -d 'encrypt=my message'
-curl -X POST http://127.0.0.1:55555 -d 'decrypt=_aff01c11w18x0594kdy5a80006gzf4'
+curl -X POST http://127.0.0.1:55555 -d 'decrypt=_c5b90ga500gq0x9gg4r0f0'
 curl -sS http://127.0.0.1:55555 -F encrypt=@a.out > b.out.cipher
 curl -sS http://localhost:55555 -F decrypt=@b.out.cipher > b.out
