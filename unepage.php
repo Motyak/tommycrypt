@@ -9,6 +9,16 @@
         return $res;
     }
 
+    function multi_encrypt($filepath) {
+        $res = `/bin/bash -c './multi_encrypt.sh 16 < "{$filepath}"'` or die("rip");
+        return $res;
+    }
+
+    function multi_decrypt($filepath) {
+        $res = `/bin/bash -c './multi_decrypt.sh < "{$filepath}"'` or die("rip");
+        return $res;
+    }
+
     /* handle POST */
     if (isset($_POST["encrypt"])) {
         echo encrypt($_POST["encrypt"]);
@@ -16,6 +26,16 @@
     }
     if (isset($_POST["decrypt"])) {
         echo decrypt($_POST["decrypt"]);
+        exit(0);
+    }
+    if (isset($_FILES["encrypt"])) {
+        $filepath = $_FILES["encrypt"]["tmp_name"];
+        echo multi_encrypt($filepath);
+        exit(0);
+    }
+    if (isset($_FILES["decrypt"])) {
+        $filepath = $_FILES["decrypt"]["tmp_name"];
+        echo multi_decrypt($filepath);
         exit(0);
     }
 ?>

@@ -12,5 +12,13 @@ echo "my message" | python3 encrypt.py | python3 decrypt.py
 
 ## web application frontend ##
 # start the server
-php -S localhost:55555 unepage.php
-# server is now available under http://localhost:55555
+php -S 127.0.0.1:55555 unepage.php
+# server is now available under http://127.0.0.1:55555
+php -S localhost:0 unepage.php # another possibility
+# support query params, e.g.: ?encrypt=message or ?decrypt=_c9cf0g40670k2d2p6
+
+## web server outsourcing using CLI ##
+curl -X POST http://127.0.0.1:55555 -d 'encrypt=my message'
+curl -X POST http://127.0.0.1:55555 -d 'decrypt=_aff01c11w18x0594kdy5a80006gzf4'
+curl -sS http://127.0.0.1:55555 -F encrypt=@a.out > b.out.cipher
+curl -sS http://localhost:55555 -F decrypt=@b.out.cipher > b.out
