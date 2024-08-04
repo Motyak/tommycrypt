@@ -29,4 +29,4 @@ if __name__ == "__main__":
     if len(input) > 0 and input[-1] == "\n":
         input = input[:-1] # remove trailing newline
     decrypted = multipart_decrypt(SECRET, input)
-    print(bytes_to_utf8(decrypted), end="\n" if len(sys.argv) == 1 else "")
+    sys.stdout.buffer.write(decrypted)

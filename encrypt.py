@@ -7,7 +7,7 @@ def encrypt(secret, input) -> str:
     return "_" + hashfn(input) + b32encode(xor(secret, input))
 
 if __name__ == "__main__":
-    input = sys.stdin.read()
+    input = sys.stdin.buffer.read()
     if len(sys.argv) == 1 and len(input) > 0 and input[-1] == "\n":
         input = input[:-1] # remove trailing newline
     encrypted = encrypt(SECRET, input)

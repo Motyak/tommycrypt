@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function multi_decrypt {
-    mkdir "tmp$(date '+%s')"
+    mkdir "tmp$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 8)"
     tmpdir="$_"
     cd "$tmpdir"
     # takes STDIN here
