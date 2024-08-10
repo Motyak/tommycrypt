@@ -21,4 +21,4 @@ php -S localhost:0 unepage.php # another possibility
 curl -X POST http://127.0.0.1:55555 -d 'encrypt=my message'
 curl -X POST http://127.0.0.1:55555 -d 'decrypt=_c5b90ga500gq0x9gg4r0f0'
 curl -sS http://127.0.0.1:55555 -F encrypt=@a.out > b.out.cipher
-curl -sS http://localhost:55555 -F decrypt=@b.out.cipher > b.out
+curl -sS http://127.0.0.1:55555 -F decrypt=@b.out.cipher > b.out
