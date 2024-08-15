@@ -1,5 +1,4 @@
 import itertools
-import functools
 import sys #debug
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
@@ -39,15 +38,14 @@ def b32encode(input) -> str:
         return ""
     if isinstance(input, str):
         input = utf8_to_bytes(input)
-
-    reducer = lambda acc, c: acc + byte_to_bin_str(c)
-    bin_str = functools.reduce(reducer, input, "")
+    bin_str = ""
+    for b in input:
+        bin_str += byte_to_bin_str(b)
     quintets = [bin_str[i:i+5] for i in range(0, len(bin_str), 5)]
     quintets[-1] = quintets[-1].ljust(5, "0") # potential padding
     indices = [*map(bin_str_to_int, quintets)]
     base32 = "".join([*map(lambda i: B32_ALPHABET[i], indices)])
     return base32
-
 
 def b32decode(input) -> bytes:
     global B32_ALPHABET
