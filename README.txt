@@ -13,8 +13,9 @@ echo "my message" | python3 encrypt.py | python3 decrypt.py
 ## web application frontend ##
 # start the server
 php -S 127.0.0.1:55555 unepage.php
+# the following config bypass file size limitation (otherwise 2M)
+php -S 127.0.0.1:55555 -c <(echo -e "upload_max_filesize=-1\npost_max_size=-1") unepage.php
 # server is now available under http://127.0.0.1:55555
-php -S localhost:0 unepage.php # another possibility
 # support query params, e.g.: ?encrypt=message or ?decrypt=_c9cf0g40670k2d2p6
 
 ## web server outsourcing using CLI ##
