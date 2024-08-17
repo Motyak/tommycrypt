@@ -5,7 +5,7 @@ function multi_decrypt {
     tmpdir="$_"
     cd "$tmpdir"
     # takes STDIN here
-    cmd="$(perl -pe 's/_?([^\/_]+?)(?:_|\n)/<(python3 ..\/decrypt.py -n <<< "$1") /gm')"
+    cmd="$(perl -pe 's/_?([^\/_]+?)(?:_|\n)/<(python3 ..\/decrypt.py <<< "$1") /gm')"
     eval "cat $cmd"
     cd ..
     rm -rf "$tmpdir"
