@@ -8,7 +8,8 @@ def encrypt(secret, input) -> str:
 
 if __name__ == "__main__":
     input = sys.stdin.buffer.read()
-    if len(sys.argv) == 1 and len(input) > 0 and input[-1] == "\n":
+    LF = 10
+    if len(sys.argv) == 2 and len(input) > 0 and input[-1] == LF:
         input = input[:-1] # remove trailing newline
     encrypted = encrypt(SECRET, input)
     print(encrypted, end="\n" if len(sys.argv) == 1 else "")

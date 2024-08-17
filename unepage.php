@@ -1,6 +1,6 @@
 <?php
     function encrypt($msg) {
-        $res = `/bin/bash -c 'python3 encrypt.py <<< "{$msg}"'` or die("rip");
+        $res = `/bin/bash -c 'python3 encrypt.py -n <<< "{$msg}"'` or die("rip");
         return $res;
     }
 
