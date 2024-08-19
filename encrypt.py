@@ -12,4 +12,4 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and len(input) > 0 and input[-1] == LF:
         input = input[:-1] # remove trailing newline
     encrypted = encrypt(SECRET, input)
-    print(encrypted, end="\n" if len(sys.argv) == 1 else "")
+    print(encrypted, end="" if len(sys.argv) == 2 else "\n")
