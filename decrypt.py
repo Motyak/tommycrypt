@@ -2,14 +2,6 @@ from common import SECRET, b32decode, b64decode, xor, hashfn, bytes_to_utf8
 import sys
 from functools import reduce as reduce
 
-def multipart_decrypt(secret, input_str) -> bytes:
-    if input_str[0] == "_":
-        input_str = input_str[1:]
-    split_input = input_str.split("_")
-    split_input = [*map(lambda x: decrypt(secret, x), split_input)]
-    output = reduce(lambda a, b: a + b, split_input)
-    return output
-
 def decrypt(secret, input_str) -> bytes:
     if len(input_str) == 0:
         return bytes()
@@ -23,6 +15,14 @@ def decrypt(secret, input_str) -> bytes:
     if hashfn(decrypted) != hash:
         raise Exception("invalid input")
     return decrypted
+
+def multipart_decrypt(secret, input_str) -> bytes:
+    if input_str[0] == "_":
+        input_str = input_str[1:]
+    split_input = input_str.split("_")
+    split_input = [*map(lambda x: decrypt(secret, x), split_input)]
+    output = reduce(lambda a, b: a + b, split_input)
+    return output
 
 if __name__ == "__main__":
     input = sys.stdin.read()
