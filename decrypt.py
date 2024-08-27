@@ -7,7 +7,7 @@ def decrypt(secret, input_str) -> bytes:
         return bytes()
     if isinstance(input_str, bytes):
         input_str = bytes_to_utf8(input_str)
-    if len(input_str) < 4:
+    if len(input_str) < 5:
         raise Exception("invalid input")
     hash = input_str[0:4]
     decoded_payload = b32decode(input_str[4:])
