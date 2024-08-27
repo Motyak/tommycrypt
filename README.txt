@@ -11,3 +11,37 @@ from tommycrypt import tommycrypt
 tommycrypt("c'est l'éclate")
 tommycrypt("c6be8034m1g7a91mbap79g4gy0i5")
 tommycrypt(tommycrypt("c'est l'éclate"))
+
+---
+
+caveat: the hash function is simple, with 1/256 chance of collision..
+..therefore having a matching hash barely guarantee the cipher was produced..
+..by our encryption process.
+Our decrypt function decode decrypted bytes as utf8 but if the input wasn't produce..
+..by ourselves, then it could contain non-utf8 bytes and the program would crash.
+
+Here is a way to search for bad inputs (that will cause the program to crash):
+1- call `xor(secret, b32decode(<str>))`..
+   ..where <str> is any str containing at least two characters.
+2- if it prints invalid utf8 bytes (in the form of hex bytes)..
+   .., then we found a candidate, otherwise repeat previous step..
+   ..with another input str
+3- when you found a candidate, calculate its hash through the hashfn:..
+   ..`hashfn(xor(secret, b32decode(<str>)))` and prefix the result to..
+   ..the <str>.
+
+e.g.:
+Calling `xor(secret, b32decode("febb"))` produces the following bytes:..
+..b'X\xb7' (invalid start byte in position 1)
+Calling `hashfn(xor(secret, b32decode("febb")))` produces the following..
+..hash: 'fa25'.
+Prefixing the hash to the input str procuces `fa25febb`.
+Calling tommycrypt("fa25febb") will therefore make the program crash.
+
+another e.g.:
+Calling `xor(secret, b32decode("1337"))` produces the following bytes:..
+..b'+\xe7' (unexpected end of data in position 1)
+Calling `hashfn(xor(secret, b32decode("1337")))` produces the following..
+..hash: 'ee3b'.
+Prefixing the hash to the input str procuces `ee3b1337`.
+Calling tommycrypt("ee3b1337") will therefore make the program crash.
