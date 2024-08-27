@@ -84,7 +84,7 @@ def tommycrypt(input_str) -> str:
         nonlocal secret
         if len(input_str) == 0:
             return ""
-        if len(input_str) < 4:
+        if len(input_str) < 6:
             raise TommyExcept("invalid input")
         hash = input_str[0:4]
         decoded_payload = b32decode(input_str[4:])
