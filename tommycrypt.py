@@ -100,8 +100,10 @@ def tommycrypt(input_str) -> str:
 
 if __name__ == "__main__":
     import sys
-    input_str = sys.stdin.readline()
+    # toggle multiline mode with arg `-m`
+    stdin = lambda: sys.stdin.read() if len(sys.argv) > 1 else sys.stdin.readline()
+    input_str = stdin()
     while input_str:
         res = tommycrypt(input_str[:-1])
         print(res, flush=True)
-        input_str = sys.stdin.readline()
+        input_str = stdin()
