@@ -100,6 +100,8 @@ def tommycrypt(input_str) -> str:
 
 if __name__ == "__main__":
     import sys
-    input_str = sys.stdin.read()
-    res = tommycrypt(input_str[:-1]) # remove trailing newline
-    print(res)
+    input_str = sys.stdin.readline()
+    while input_str:
+        res = tommycrypt(input_str[:-1])
+        print(res, flush=True)
+        input_str = sys.stdin.readline()

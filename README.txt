@@ -12,6 +12,15 @@ tommycrypt("c'est l'éclate")
 tommycrypt("c6be8034m1g7a91mbap79g4gy0i5")
 tommycrypt(tommycrypt("c'est l'éclate"))
 
+# communicate through encrypted tunnel with netcat #
+# run server (terminal #1)
+./tommycrypt.py | nc -k -l 127.0.0.1 55555 | ./tommycrypt.py
+# initiate interactive session with server (terminal #2)
+./tommycrypt | nc 127.0.0.1 55555 | ./tommycrypt
+# now you can communicate from client to server and vice versa,..
+# ..messages are seemlessly encrypted when sent..
+# ..and decrypted when received, on both side
+
 ---
 
 caveat: the hash function is simple, with 1/256 chance of collision..
