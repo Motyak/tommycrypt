@@ -16,7 +16,7 @@ tommycrypt(tommycrypt("c'est l'éclate"))
 # run server (terminal #1)
 ./tommycrypt.py | nc -k -l 127.0.0.1 55555 | ./tommycrypt.py
 # initiate interactive session with server (terminal #2)
-./tommycrypt | nc 127.0.0.1 55555 | ./tommycrypt
+./tommycrypt.py | nc 127.0.0.1 55555 | ./tommycrypt.py
 # now you can communicate from client to server and vice versa,..
 # ..messages are seemlessly encrypted when sent..
 # ..and decrypted when received, on both side
