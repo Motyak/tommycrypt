@@ -71,7 +71,7 @@ nc -k -l 127.0.0.1 55556 < fifo1 \
 nc -k -l 127.0.0.1 55557 < fifo2 \
     | ./tommycrypt.py | nc 127.0.0.1 55556 | ./tommycrypt.py > fifo2
 
-# the "extern" address 127.0.0.1:55557 can be used..
+# the address 127.0.0.1:55557 can be used..
 # ..from the client machine as if it was the PHP server itself
 
 # all the traffic between the two machines appears..
