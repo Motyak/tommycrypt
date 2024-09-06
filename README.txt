@@ -78,6 +78,6 @@ nc -k -l 127.0.0.1 55557 < fifo2 \
 # ..as encrypted data inside tcp packets
 
 current bug with nc/php:
-once the tcp connection gets closed by php, the piped netcat server..
+once the tcp connection gets closed by php, the netcat client..
 ..doesn't close/restart automatically (ideally the connection would get..
 ..renewed automatically once the php server closes the current tcp connection)
