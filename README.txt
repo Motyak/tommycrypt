@@ -54,3 +54,30 @@ Calling `hashfn(xor(secret, b32decode("1337")))` produces the following..
 ..hash: 'ee3b'.
 Prefixing the hash to the input str procuces `ee3b1337`.
 Calling tommycrypt("ee3b1337") will therefore make the program crash.
+
+---
+
+obfuscated http server through tcp relay (using netcat and named pipes):
+
+## on server machine ##
+# actual web server
+php -S 127.0.0.1 55555
+# decrypter
+nc -k -l 127.0.0.1 55556 < fifo1 \
+    | ./tommycrypt.py | nc 127.0.0.1 55555 | ./tommycrypt.py > fifo1
+
+## on client machine ##
+# encrypter
+nc -k -l 127.0.0.1 55557 < fifo2 \
+    | ./tommycrypt.py | nc 127.0.0.1 55556 | ./tommycrypt.py > fifo2
+
+# the "extern" address 127.0.0.1:55557 can be used..
+# ..from the client machine as if it was the PHP server itself
+
+# all the traffic between the two machines appears..
+# ..as encrypted data inside tcp packets
+
+current bug with nc/php:
+once the tcp connection gets closed by php, the piped netcat server..
+..doesn't close/restart automatically (ideally the connection would get..
+..renewed automatically once the php server closes the current tcp connection)
