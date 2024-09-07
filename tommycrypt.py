@@ -104,6 +104,8 @@ if __name__ == "__main__":
     stdin = lambda: sys.stdin.read() if len(sys.argv) > 1 else sys.stdin.readline()
     input_str = stdin()
     while input_str:
-        res = tommycrypt(input_str[:-1])
+        if input_str[-1] == '\n':
+            input_str = input_str[:-1] # remove trailing newline
+        res = tommycrypt(input_str)
         print(res, flush=True)
         input_str = stdin()
