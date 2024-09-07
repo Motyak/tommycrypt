@@ -61,7 +61,7 @@ obfuscated http server through tcp relay (using netcat and named pipes):
 
 ## on server machine ##
 # actual web server
-php -S 127.0.0.1 55555
+php -S 127.0.0.1:55555
 # decrypter
 nc -k -l 127.0.0.1 55556 < fifo1 \
     | ./tommycrypt.py | nc 127.0.0.1 55555 | ./tommycrypt.py > fifo1
