@@ -62,14 +62,20 @@ obfuscated http server through tcp relay (using netcat and named pipes):
 ## on server machine ##
 # actual web server
 php -S 127.0.0.1:55555 unepage.php
-# decrypter
+# decrypt nc (55556) tcp input, encrypt web server tcp output
 nc -k -l 127.0.0.1 55556 < fifo1 \
     | ./tommycrypt.py | nc 127.0.0.1 55555 | ./tommycrypt.py > fifo1
+# same command with verbose
+nc -k -l 127.0.0.1 55556 < fifo1  \
+    | tee >(./tommycrypt.py | nc 127.0.0.1 55555 | tee >(./tommycrypt.py > fifo1))
 
 ## on client machine ##
-# encrypter
+# encrypt nc (55557) tcp input, decrypt nc (55556) tcp output
 nc -k -l 127.0.0.1 55557 < fifo2 \
     | ./tommycrypt.py | nc 127.0.0.1 55556 | ./tommycrypt.py > fifo2
+# same command with verbose
+nc -k -l 127.0.0.1 55557 < fifo2 \
+    | tee >(./tommycrypt.py | nc 127.0.0.1 55556 | tee >(./tommycrypt.py > fifo2))
 
 # the address 127.0.0.1:55557 can be used..
 # ..from the client machine as if it was the PHP server itself
