@@ -42,14 +42,16 @@ def b32decode(input_str) -> bytes:
         bin_str = bin_str[:-(len(bin_str) % 8)] # drop useless bits
     return bytes(int(bin_str[i:i+8], 2) for i in range(0, len(bin_str), 8))
 
-def xor(secret, input) -> bytes:
-    if isinstance(secret, str):
-        secret = secret.encode("utf-8")
+def xor(key, input, key_offset=0) -> bytes:
+    if isinstance(key, str):
+        key = key.encode("utf-8")
     if isinstance(input, str):
         input = input.encode("utf-8")
+    consume = lambda it, n: [next(it) for i in range(n)]
 
-    iterator_secret = itertools.cycle(secret)
-    pairs = zip(iterator_secret, input)
+    iterator_key = itertools.cycle(key)
+    consume(iterator_key, key_offset)
+    pairs = zip(iterator_key, input)
     return bytes(map(lambda x: x[0] ^ x[1], pairs))
 
 def hashfn(input) -> str:
@@ -78,7 +80,8 @@ def tommycrypt(input_str) -> str:
         nonlocal secret
         if len(input_str) == 0:
             return ""
-        return hashfn(input_str) + b32encode(xor(secret, input_str))
+        xored = xor(secret, input_str, key_offset=int(len(secret) / 2))
+        return hashfn(input_str) + b32encode(xored)
 
     def decrypt(input_str) -> str:
         nonlocal secret
@@ -88,7 +91,7 @@ def tommycrypt(input_str) -> str:
             raise TommyExcept("invalid input")
         hash = input_str[0:4]
         decoded_payload = b32decode(input_str[4:])
-        decrypted = xor(secret, decoded_payload)
+        decrypted = xor(secret, decoded_payload, key_offset=int(len(secret) / 2))
         if hashfn(decrypted) != hash:
             raise TommyExcept("invalid input")
         return decrypted.decode("utf-8") # at this point WE know its utf8
