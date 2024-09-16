@@ -2,16 +2,26 @@
 import itertools
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
+SECRET: bytes
+
+def __slurp_as_bytes(file):
+    with open(file, encoding="utf-8") as f:
+        return f.read()
+SECRET = __slurp_as_bytes(__file__)
+del __slurp_as_bytes
 
 class TommyExcept(Exception):
     pass
 
 def b32encode(input) -> str:
+    global SECRET
     global B32_ALPHABET
     assert isinstance(B32_ALPHABET, str)
     assert len(B32_ALPHABET) == 32
     byte_to_bin_str = lambda byte: bin(byte)[2:].rjust(8, "0")
     bin_str_to_int = lambda bin_str: int(bin_str, 2)
+    __spice = len(SECRET) % 32
+    spiced_b32_alphabet = (2 * B32_ALPHABET)[__spice:__spice+32]
 
     if len(input) == 0:
         return ""
@@ -23,10 +33,11 @@ def b32encode(input) -> str:
     quintets = [bin_str[i:i+5] for i in range(0, len(bin_str), 5)]
     quintets[-1] = quintets[-1].ljust(5, "0") # potential padding
     indices = [*map(bin_str_to_int, quintets)]
-    base32 = "".join([*map(lambda i: B32_ALPHABET[i], indices)])
+    base32 = "".join([*map(lambda i: spiced_b32_alphabet[i], indices)])
     return base32
 
 def b32decode(input_str) -> bytes:
+    global SECRET
     global B32_ALPHABET
     assert isinstance(B32_ALPHABET, str)
     assert len(B32_ALPHABET) == 32
@@ -34,8 +45,10 @@ def b32decode(input_str) -> bytes:
         if c not in B32_ALPHABET:
             raise TommyExcept(f"character `{c}` is not in base32 alphabet ({B32_ALPHABET})")
     quintet_to_bin_str = lambda quintet: bin(quintet)[2:].rjust(5, "0")
+    _spice = len(SECRET) % 32
+    spiced_b32_alphabet = (2 * B32_ALPHABET)[_spice:_spice+32]
 
-    indices = [*map(lambda c: B32_ALPHABET.index(c), input_str)]
+    indices = [*map(lambda c: spiced_b32_alphabet.index(c), input_str)]
     quintets = [*map(lambda i: quintet_to_bin_str(i), indices)]
     bin_str = "".join(quintets)
     if len(bin_str) % 8 != 0:
@@ -71,27 +84,22 @@ def hashfn(input) -> str:
     return md5ify(hash)
 
 def tommycrypt(input_str) -> str:
-    def slurp_as_bytes(file):
-        with open(file, encoding="utf-8") as f:
-            return f.read()
-    secret = slurp_as_bytes(__file__)
-
     def encrypt(input_str) -> str:
-        nonlocal secret
+        global SECRET
         if len(input_str) == 0:
             return ""
-        xored = xor(secret, input_str, key_offset=int(len(secret) / 2))
+        xored = xor(SECRET, input_str, key_offset=int(len(SECRET) / 2))
         return hashfn(input_str) + b32encode(xored)
 
     def decrypt(input_str) -> str:
-        nonlocal secret
+        global SECRET
         if len(input_str) == 0:
             return ""
         if len(input_str) < 6:
             raise TommyExcept("invalid input")
         hash = input_str[0:4]
         decoded_payload = b32decode(input_str[4:])
-        decrypted = xor(secret, decoded_payload, key_offset=int(len(secret) / 2))
+        decrypted = xor(SECRET, decoded_payload, key_offset=int(len(SECRET) / 2))
         if hashfn(decrypted) != hash:
             raise TommyExcept("invalid input")
         return decrypted.decode("utf-8") # at this point WE know its utf8
