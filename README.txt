@@ -21,6 +21,10 @@ tommycrypt(tommycrypt("c'est l'éclate"))
 # ..messages are seemlessly encrypted when sent..
 # ..and decrypted when received, on both side
 
+BONUS:
+- you can pass the `-m` option to toggle multiline mode on utf8 input
+- now support non-utf8 input by executing `./tommycrypt-bin.py` instead
+
 ---
 
 caveat: the hash function is simple, with 1/256 chance of collision..
