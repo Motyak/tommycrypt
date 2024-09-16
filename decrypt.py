@@ -11,7 +11,7 @@ def decrypt(secret, input_str) -> bytes:
         raise Exception("invalid input")
     hash = input_str[0:4]
     decoded_payload = b32decode(input_str[4:])
-    decrypted = xor(secret, decoded_payload)
+    decrypted = xor(secret, decoded_payload, key_offset=int(len(secret) / 2))
     if hashfn(decrypted) != hash:
         raise Exception("invalid input")
     return decrypted

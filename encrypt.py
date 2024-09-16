@@ -4,7 +4,8 @@ import sys
 def encrypt(secret, input) -> str:
     if len(input) == 0:
         return ""
-    return "_" + hashfn(input) + b32encode(xor(secret, input))
+    xored = xor(secret, input, key_offset=int(len(secret) / 2))
+    return "_" + hashfn(input) + b32encode(xored)
 
 if __name__ == "__main__":
     input = sys.stdin.buffer.read()

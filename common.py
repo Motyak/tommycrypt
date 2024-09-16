@@ -94,14 +94,16 @@ def b64decode(input) -> bytes:
         bin_str = bin_str[:-(len(bin_str) % 8)] # drop useless bits
     return bytes(int(bin_str[i:i+8], 2) for i in range(0, len(bin_str), 8))
     
-def xor(secret, input) -> bytes:
-    if isinstance(secret, str):
-        secret = utf8_to_bytes(secret)
+def xor(key, input, key_offset=0) -> bytes:
+    if isinstance(key, str):
+        key = utf8_to_bytes(key)
     if isinstance(input, str):
         input = utf8_to_bytes(input)
+    consume = lambda it, n: [next(it) for i in range(n)]
 
-    iterator_secret = itertools.cycle(secret)
-    pairs = zip(iterator_secret, input)
+    iterator_key = itertools.cycle(key)
+    consume(iterator_key, key_offset)
+    pairs = zip(iterator_key, input)
     return bytes(map(lambda x: x[0] ^ x[1], pairs))
 
 def hashfn(input) -> str:
