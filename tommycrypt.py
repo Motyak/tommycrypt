@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import itertools
+import random
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
 SECRET: bytes
@@ -20,8 +21,13 @@ def b32encode(input) -> str:
     assert len(B32_ALPHABET) == 32
     byte_to_bin_str = lambda byte: bin(byte)[2:].rjust(8, "0")
     bin_str_to_int = lambda bin_str: int(bin_str, 2)
-    __spice = len(SECRET) % 32
-    spiced_b32_alphabet = (2 * B32_ALPHABET)[__spice:__spice+32]
+    b32_alphabet = B32_ALPHABET
+
+    ## spice it up ##
+    __seed = len(SECRET)
+    __tmp_list = list(b32_alphabet)
+    random.Random(__seed).shuffle(__tmp_list)
+    b32_alphabet = "".join(__tmp_list)
 
     if len(input) == 0:
         return ""
@@ -33,7 +39,7 @@ def b32encode(input) -> str:
     quintets = [bin_str[i:i+5] for i in range(0, len(bin_str), 5)]
     quintets[-1] = quintets[-1].ljust(5, "0") # potential padding
     indices = [*map(bin_str_to_int, quintets)]
-    base32 = "".join([*map(lambda i: spiced_b32_alphabet[i], indices)])
+    base32 = "".join([*map(lambda i: b32_alphabet[i], indices)])
     return base32
 
 def b32decode(input_str) -> bytes:
@@ -45,10 +51,15 @@ def b32decode(input_str) -> bytes:
         if c not in B32_ALPHABET:
             raise TommyExcept(f"character `{c}` is not in base32 alphabet ({B32_ALPHABET})")
     quintet_to_bin_str = lambda quintet: bin(quintet)[2:].rjust(5, "0")
-    __spice = len(SECRET) % 32
-    spiced_b32_alphabet = (2 * B32_ALPHABET)[__spice:__spice+32]
+    b32_alphabet = B32_ALPHABET
 
-    indices = [*map(lambda c: spiced_b32_alphabet.index(c), input_str)]
+    ## spice it up ##
+    __seed = len(SECRET)
+    __tmp_list = list(b32_alphabet)
+    random.Random(__seed).shuffle(__tmp_list)
+    b32_alphabet = "".join(__tmp_list)
+
+    indices = [*map(lambda c: b32_alphabet.index(c), input_str)]
     quintets = [*map(lambda i: quintet_to_bin_str(i), indices)]
     bin_str = "".join(quintets)
     if len(bin_str) % 8 != 0:
@@ -77,8 +88,12 @@ def hashfn(input) -> str:
         str_hash = hex(43210 + int(hash * (22222 / 255)))[2:]
         return str_hash
 
-    __spice = len(SECRET) % 256
-    T = [i % 256 for i in range(__spice, __spice + 256)]
+    T = [i for i in range(256)]
+
+    ## spice it up ##
+    __seed = len(SECRET)
+    random.Random(__seed).shuffle(T)
+
     hash = 0
     for b in input:
         hash = T[hash ^ b]
