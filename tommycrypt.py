@@ -45,8 +45,8 @@ def b32decode(input_str) -> bytes:
         if c not in B32_ALPHABET:
             raise TommyExcept(f"character `{c}` is not in base32 alphabet ({B32_ALPHABET})")
     quintet_to_bin_str = lambda quintet: bin(quintet)[2:].rjust(5, "0")
-    _spice = len(SECRET) % 32
-    spiced_b32_alphabet = (2 * B32_ALPHABET)[_spice:_spice+32]
+    __spice = len(SECRET) % 32
+    spiced_b32_alphabet = (2 * B32_ALPHABET)[__spice:__spice+32]
 
     indices = [*map(lambda c: spiced_b32_alphabet.index(c), input_str)]
     quintets = [*map(lambda i: quintet_to_bin_str(i), indices)]
@@ -77,7 +77,8 @@ def hashfn(input) -> str:
         str_hash = hex(43210 + int(hash * (22222 / 255)))[2:]
         return str_hash
 
-    T = [i for i in range(0, 256)]
+    __spice = len(SECRET) % 256
+    T = [i % 256 for i in range(__spice, __spice + 256)]
     hash = 0
     for b in input:
         hash = T[hash ^ b]
