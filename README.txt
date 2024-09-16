@@ -1,5 +1,5 @@
 only works with utf-8 text,
-we expect trailing newline in input
+trailing newline is not considered part of the input
 
 ## execute from shell ##
 ./tommycrypt.py <<< "salut à tous"
