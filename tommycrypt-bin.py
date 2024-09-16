@@ -10,7 +10,6 @@ def __slurp_as_bytes(file):
         return f.read()
 SECRET = __slurp_as_bytes(__file__)
 del __slurp_as_bytes
-SECRET = bytes([0])
 
 class TommyExcept(Exception):
     pass
