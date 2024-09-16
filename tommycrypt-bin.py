@@ -24,7 +24,7 @@ def b32encode(input) -> str:
     bin_str_to_int = lambda bin_str: int(bin_str, 2)
     b32_alphabet = B32_ALPHABET
 
-    # ## spice it up ##
+    ## spice it up ##
     __seed = len(SECRET)
     __tmp_list = list(b32_alphabet)
     random.Random(__seed).shuffle(__tmp_list)
@@ -52,7 +52,7 @@ def b32decode(input_str) -> bytes:
     quintet_to_bin_str = lambda quintet: bin(quintet)[2:].rjust(5, "0")
     b32_alphabet = B32_ALPHABET
 
-    # ## spice it up ##
+    ## spice it up ##
     __seed = len(SECRET)
     __tmp_list = list(b32_alphabet)
     random.Random(__seed).shuffle(__tmp_list)
@@ -82,7 +82,7 @@ def hashfn(input) -> str:
 
     T = [i for i in range(256)]
 
-    # ## spice it up ##
+    ## spice it up ##
     __seed = len(SECRET)
     random.Random(__seed).shuffle(T)
 
