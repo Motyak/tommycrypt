@@ -3,13 +3,13 @@ import itertools
 import random
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
-SECRET: bytes
+SECRET: str
 
-def __slurp_as_bytes(file):
+def __slurp_as_str(file):
     with open(file, encoding="utf-8") as f:
         return f.read()
-SECRET = __slurp_as_bytes(__file__)
-del __slurp_as_bytes
+SECRET = __slurp_as_str(__file__)
+del __slurp_as_str
 
 class TommyExcept(Exception):
     pass
@@ -67,6 +67,8 @@ def b32decode(input_str) -> bytes:
     return bytes(int(bin_str[i:i+8], 2) for i in range(0, len(bin_str), 8))
 
 def xor(key, input, key_offset=0) -> bytes:
+    if isinstance(key, str):
+        key = key.encode("utf-8")
     if isinstance(input, str):
         input = input.encode("utf-8")
     consume = lambda it, n: [next(it) for i in range(n)]
