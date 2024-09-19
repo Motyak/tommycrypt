@@ -6,8 +6,8 @@ B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
 SECRET: bytes
 
 def __slurp_as_bytes(file):
-    with open(file, encoding="utf-8") as f:
-        return f.read()
+    with open(file) as f:
+        return f.read().encode("utf-8")
 SECRET = __slurp_as_bytes(__file__)
 del __slurp_as_bytes
 
