@@ -25,6 +25,10 @@ BONUS:
 - you can pass the `-m` option to toggle multiline mode on utf8 input
 - now support non-utf8 input by executing `./tommycrypt-bin.py` instead
 
+cat tommycrypt-bin.py | gzip -cf | ./tommycrypt-bin.py > cipher.txt
+cat cipher.txt | ./tommycrypt-bin.py | gzip -cfd
+wc -c cipher.txt tommycrypt-bin.py # cipher.txt smaller than original
+
 ---
 
 caveat: the hash function is simple, with 1/256 chance of collision..
