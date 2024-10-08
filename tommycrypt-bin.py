@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import itertools
 import random
+import gzip
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
 SECRET: bytes
@@ -95,7 +96,8 @@ def tommycrypt(input) -> bytes:
         global SECRET
         if len(input) == 0:
             return ""
-        xored = xor(SECRET, input, key_offset=int(len(SECRET) / 2))
+        compressed = gzip.compress(input)
+        xored = xor(SECRET, compressed, key_offset=int(len(SECRET) / 2))
         return (hashfn(input) + b32encode(xored)).encode("utf-8")
 
     def decrypt(input) -> bytes:
@@ -111,9 +113,13 @@ def tommycrypt(input) -> bytes:
         hash = input[0:4]
         decoded_payload = b32decode(input[4:])
         decrypted = xor(SECRET, decoded_payload, key_offset=int(len(SECRET) / 2))
-        if hashfn(decrypted) != hash:
+        try:
+            decompressed = gzip.decompress(decrypted)
+        except:
             raise TommyExcept("invalid input")
-        return decrypted
+        if hashfn(decompressed) != hash:
+            raise TommyExcept("invalid input")
+        return decompressed
 
     try:
         return decrypt(input)
