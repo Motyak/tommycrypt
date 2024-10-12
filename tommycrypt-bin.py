@@ -97,6 +97,8 @@ def tommycrypt(input) -> bytes:
         if len(input) == 0:
             return ""
         compressed = gzip.compress(input)
+        if len(compressed) > len(input):
+            compressed = input
         xored = xor(SECRET, compressed, key_offset=int(len(SECRET) / 2))
         return (hashfn(input) + b32encode(xored)).encode("utf-8")
 
@@ -104,11 +106,11 @@ def tommycrypt(input) -> bytes:
         global SECRET
         if len(input) == 0:
             return bytes()
+        if len(input) < 6:
+            raise TommyExcept("invalid input")
         try:
             input = input.decode("utf-8")
         except:
-            raise TommyExcept("invalid input")
-        if len(input) < 6:
             raise TommyExcept("invalid input")
         hash = input[0:4]
         decoded_payload = b32decode(input[4:])
@@ -116,7 +118,7 @@ def tommycrypt(input) -> bytes:
         try:
             decompressed = gzip.decompress(decrypted)
         except:
-            raise TommyExcept("invalid input")
+            decompressed = decrypted
         if hashfn(decompressed) != hash:
             raise TommyExcept("invalid input")
         return decompressed
