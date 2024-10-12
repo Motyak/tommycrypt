@@ -4,12 +4,14 @@ import random
 import gzip
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
+# B32_ALPHABET = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" # ascii symbols only
 SECRET: bytes
 
 def __slurp_as_bytes(file):
     with open(file, "rb") as f:
         return f.read()
-SECRET = __slurp_as_bytes(__file__)
+# SECRET = __slurp_as_bytes(__file__)
+SECRET = b"stable"
 del __slurp_as_bytes
 
 class TommyExcept(Exception):
@@ -75,9 +77,11 @@ def xor(key, input, key_offset=0) -> bytes:
 
 def hashfn(input) -> str:
     def md5ify(hash):
+        global B32_ALPHABET
         assert isinstance(hash, int)
         assert 0 <= hash and hash <= 255
         str_hash = hex(43210 + int(hash * (22222 / 255)))[2:]
+        # str_hash = "#//" + "".join(B32_ALPHABET[int(c)] for c in str(hash).rjust(3, '0'))
         return str_hash
 
     T = [i for i in range(256)]
@@ -122,6 +126,9 @@ def tommycrypt(input) -> bytes:
         if hashfn(decompressed) != hash:
             raise TommyExcept("invalid input")
         return decompressed
+
+    return encrypt(input) #debug
+    # return decrypt(input) #debug
 
     try:
         return decrypt(input)
