@@ -4,14 +4,14 @@ import random
 import gzip
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
-# B32_ALPHABET = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" # ascii symbols only
+#B32_ALPHABET = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" # ascii symbols only
 SECRET: bytes
 
 def __slurp_as_bytes(file):
     with open(file, "rb") as f:
         return f.read()
 SECRET = __slurp_as_bytes(__file__)
-# SECRET = b"secret"
+#SECRET = b"secret"
 del __slurp_as_bytes
 
 class TommyExcept(Exception):
@@ -22,6 +22,7 @@ def b32encode(input) -> str:
     global B32_ALPHABET
     assert isinstance(B32_ALPHABET, str)
     assert len(B32_ALPHABET) == 32
+    assert len(set(B32_ALPHABET)) == 32
     byte_to_bin_str = lambda byte: bin(byte)[2:].rjust(8, "0")
     bin_str_to_int = lambda bin_str: int(bin_str, 2)
     b32_alphabet = B32_ALPHABET
@@ -48,6 +49,7 @@ def b32decode(input_str) -> bytes:
     global B32_ALPHABET
     assert isinstance(B32_ALPHABET, str)
     assert len(B32_ALPHABET) == 32
+    assert len(set(B32_ALPHABET)) == 32
     for c in input_str:
         if c not in B32_ALPHABET:
             raise TommyExcept(f"character `{c}` is not in base32 alphabet ({B32_ALPHABET})")
@@ -92,7 +94,7 @@ def hashfn(input) -> str:
     for b in input:
         hash = T[hash ^ b]
 
-    # return md5ify(hash)
+    #return md5ify(hash)
     global B32_ALPHABET
     return B32_ALPHABET[hash % 22 + 10] + \
            B32_ALPHABET[hash // 8     ] + \
