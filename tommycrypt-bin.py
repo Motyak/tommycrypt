@@ -106,7 +106,7 @@ def tommycrypt(input) -> bytes:
         global SECRET
         if len(input) == 0:
             return ""
-        compressed = gzip.compress(input)
+        compressed = gzip.compress(input, mtime=0)
         if len(compressed) > len(input):
             compressed = input
         xored = xor(SECRET, compressed, key_offset=int(len(SECRET) / 2))
