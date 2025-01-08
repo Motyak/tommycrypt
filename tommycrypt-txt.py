@@ -19,6 +19,7 @@ def b32encode(input) -> str:
     global B32_ALPHABET
     assert isinstance(B32_ALPHABET, str)
     assert len(B32_ALPHABET) == 32
+    assert len(set(B32_ALPHABET)) == 32
     byte_to_bin_str = lambda byte: bin(byte)[2:].rjust(8, "0")
     bin_str_to_int = lambda bin_str: int(bin_str, 2)
     b32_alphabet = B32_ALPHABET
@@ -82,22 +83,27 @@ def hashfn(input) -> str:
     if isinstance(input, str):
         input = input.encode("utf-8")
 
-    def md5ify(hash):
-        assert isinstance(hash, int)
-        assert 0 <= hash and hash <= 255
-        str_hash = hex(43210 + int(hash * (22222 / 255)))[2:]
-        return str_hash
+    def pearson(input) -> int:
+            T = [i for i in range(256)]
 
-    T = [i for i in range(256)]
+            ## spice it up ##
+            __seed = len(SECRET)
+            random.Random(__seed).shuffle(T)
 
-    ## spice it up ##
-    __seed = len(SECRET)
-    random.Random(__seed).shuffle(T)
+            hash = 0
+            for b in input:
+                hash = T[hash ^ b]
 
-    hash = 0
-    for b in input:
-        hash = T[hash ^ b]
-    return md5ify(hash)
+            assert 0 <= hash and hash <= 255
+            return hash
+
+    global B32_ALPHABET
+    return "".join([
+        B32_ALPHABET[(pearson(input) + 320) // 32],
+        B32_ALPHABET[(pearson(input) + 320) % 32],
+        B32_ALPHABET[len(input) % 1024 // 32],
+        B32_ALPHABET[len(input) % 1024 % 32],
+    ])
 
 def tommycrypt(input_str) -> str:
     def encrypt(input_str) -> str:

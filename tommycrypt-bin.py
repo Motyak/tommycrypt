@@ -78,31 +78,30 @@ def xor(key, input, key_offset=0) -> bytes:
     return bytes(map(lambda x: x[0] ^ x[1], pairs))
 
 def hashfn(input) -> str:
-    def md5ify(hash):
-        assert isinstance(hash, int)
+    def pearson(input) -> int:
+        T = [i for i in range(256)]
+
+        ## spice it up ##
+        __seed = len(SECRET)
+        random.Random(__seed).shuffle(T)
+
+        hash = 0
+        for b in input:
+            hash = T[hash ^ b]
+
         assert 0 <= hash and hash <= 255
-        str_hash = hex(43210 + int(hash * (22222 / 255)))[2:]
-        return str_hash
+        return hash
 
-    T = [i for i in range(256)]
-
-    ## spice it up ##
-    __seed = len(SECRET)
-    random.Random(__seed).shuffle(T)
-
-    hash = 0
-    for b in input:
-        hash = T[hash ^ b]
-
-    #return md5ify(hash)
     global B32_ALPHABET
-    return B32_ALPHABET[hash % 22 + 10] + \
-           B32_ALPHABET[hash // 8     ] + \
-           B32_ALPHABET[hash % 32     ] + \
-           B32_ALPHABET[hash % 10]
+    return "".join([
+        B32_ALPHABET[(pearson(input) + 320) // 32],
+        B32_ALPHABET[(pearson(input) + 320) % 32],
+        B32_ALPHABET[len(input) % 1024 // 32],
+        B32_ALPHABET[len(input) % 1024 % 32],
+    ])
 
 def tommycrypt(input) -> bytes:
-    def encrypt(input: bytes) -> bytes:
+    def encrypt(input) -> bytes:
         global SECRET
         if len(input) == 0:
             return ""
