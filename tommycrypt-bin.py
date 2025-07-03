@@ -109,7 +109,7 @@ def tommycrypt(input) -> bytes:
         if len(compressed) > len(input):
             compressed = input
         xored = xor(SECRET, compressed, key_offset=int(len(SECRET) / 2))
-        return (hashfn(input) + b32encode(xored)).encode("utf-8")
+        return (hashfn(input) + b32encode(xored)).encode("ascii")
 
     def decrypt(input) -> bytes:
         global SECRET
@@ -118,7 +118,7 @@ def tommycrypt(input) -> bytes:
         if len(input) < 6:
             raise TommyExcept("invalid input")
         try:
-            input = input.decode("utf-8")
+            input = input.decode("ascii")
         except:
             raise TommyExcept("invalid input")
         hash = input[0:4]
