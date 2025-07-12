@@ -1,4 +1,4 @@
-only works with utf-8 text,
+only works with latin256 text,
 trailing newline is not considered part of the input
 
 ## execute from shell ##
