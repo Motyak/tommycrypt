@@ -3,6 +3,13 @@ import itertools
 import random
 
 B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
+
+NEWLINE = "\n"
+SPACE = " "
+BASIC_LATIN = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+EXT_LATIN = "€£§µçáźéŕýúíóṕśǵḱĺḿẃćńǘÁŹÉŔÝÚÍÓṔŚǴḰĹḾẂĆŃǗàèỳùìòẁǹǜÀÈỲÙÌÒẀǸǛãẽỹũĩõṽñÃẼỸŨĨÕṼÑâẑêŷûîôŝĝĥĵŵĉÂẐÊŶÛÎÔŜĜĤĴŴĈäëẗÿüïöḧẅẍÄËŸÜÏÖḦẄẌǎžěřǔǐǒšǧȟǰǩčňǚťďľǍŽĚŘŤǓǏǑŠĎǦȞǨČŇǙĽ¿æœÆŒ"
+LATIN256_ALPHABET = NEWLINE + SPACE + BASIC_LATIN + EXT_LATIN
+
 SECRET: str
 
 def __slurp_as_str(file):
@@ -13,6 +20,30 @@ del __slurp_as_str
 
 class TommyExcept(Exception):
     pass
+
+def utf8_to_latin256(input: str) -> bytes:
+    global LATIN256_ALPHABET
+    assert isinstance(LATIN256_ALPHABET, str)
+    assert len(LATIN256_ALPHABET) == 256
+    assert len(set(LATIN256_ALPHABET)) == 256
+    res = []
+    for c in input:
+        try:
+            latin256_letter = LATIN256_ALPHABET.index(c)
+        except:
+            raise TommyExcept(f"character `{c}` is not in latin256 alphabet ({LATIN256_ALPHABET})")
+        res += [latin256_letter]
+    return bytes(res)
+
+def latin256_to_utf8(input: bytes) -> str:
+    global LATIN256_ALPHABET
+    assert isinstance(LATIN256_ALPHABET, str)
+    assert len(LATIN256_ALPHABET) == 256
+    assert len(set(LATIN256_ALPHABET)) == 256
+    res = ""
+    for b in input:
+        res += LATIN256_ALPHABET[b]
+    return res
 
 def b32encode(input) -> str:
     global SECRET
@@ -110,7 +141,8 @@ def tommycrypt(input_str) -> str:
         global SECRET
         if len(input_str) == 0:
             return ""
-        xored = xor(SECRET, input_str, key_offset=int(len(SECRET) / 2))
+        latin256 = utf8_to_latin256(input_str)
+        xored = xor(SECRET, latin256, key_offset=int(len(SECRET) / 2))
         return hashfn(input_str) + b32encode(xored)
 
     def decrypt(input_str) -> str:
@@ -121,10 +153,14 @@ def tommycrypt(input_str) -> str:
             raise TommyExcept("invalid input")
         hash = input_str[0:4]
         decoded_payload = b32decode(input_str[4:])
-        decrypted = xor(SECRET, decoded_payload, key_offset=int(len(SECRET) / 2))
+        xored = xor(SECRET, decoded_payload, key_offset=int(len(SECRET) / 2))
+        decrypted = latin256_to_utf8(xored)
         if hashfn(decrypted) != hash:
             raise TommyExcept("invalid input")
-        return decrypted.decode("utf-8") # at this point WE know its utf8
+        return decrypted
+
+    # return encrypt(input) #debug
+    # return decrypt(input) #debug
 
     try:
         return decrypt(input_str)
