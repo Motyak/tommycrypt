@@ -3,7 +3,8 @@ import itertools
 import random
 import gzip
 
-B32_ALPHABET = "0123456789abcdefghikmnpqrstuwxyz" # removed J, L, O, V
+B32_ALPHABET = "0123456789abcdefghjkmnpqrstuwxyz" # removed I, L, O, V for readability
+                                                  # e.g.: jil1IO0uvwUVW => j10uwUW
 #B32_ALPHABET = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" # ascii symbols only
 SECRET: bytes
 
